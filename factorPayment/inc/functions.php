@@ -24,3 +24,10 @@ function wpf_status($status_code)
     }
     return "<span class='wpf_status {$class_css}'>{$txt_name}</span>";
 }
+
+function wpf_amount($amount){
+    $persian_numbers = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+    $en_numbers = ['0','1','2','3','4','5','6','7','8','9'];
+    $result = number_format($amount);
+    return str_replace($en_numbers,$persian_numbers,$result);
+}
