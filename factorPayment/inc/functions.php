@@ -13,3 +13,14 @@ function wpf_generator_code($length = 10)
 {
     return bin2hex(random_bytes($length / 2));
 }
+
+function wpf_status($status_code)
+{
+    $class_css = 'wpf_status_error';
+    $txt_name = 'پرداخت نشده';
+    if ($status_code == 1) {
+        $class_css = 'wpf_status_success';
+        $txt_name = 'پرداخت شده';
+    }
+    return "<span class='wpf_status {$class_css}'>{$txt_name}</span>";
+}
