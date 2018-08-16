@@ -28,7 +28,12 @@ function wpf_main_page()
 {
     global $wpdb, $table_prefix;
     $table_factors = $table_prefix . 'factors';
-    $factors = $wpdb->get_results("SELECT * FROM {$table_factors}");
+    $factors = $wpdb->get_results("
+                SELECT 
+                f.*,
+                u.display_name 
+                FROM {$table_factors} f
+                JOIN {$wpdb->users} u ON f.factor_user_id = u.ID");
     wpf_load_view('admin.dashboard.index', compact('factors'));
 }
 
