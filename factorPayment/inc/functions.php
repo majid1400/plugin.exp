@@ -50,3 +50,24 @@ function wpf_date_persian($en_date)
     }
 
 }
+
+function wpf_get_current_url()
+{
+    return $_SERVER['REQUEST_URI'];
+}
+
+function wpf_show_factor($factor_code){
+    global $wpdb,$table_prefix;
+    $factor_item = $wpdb->get_row($wpdb->prepare(
+        "
+        SELECT *
+        FROM {$table_prefix}factors
+        WHERE factor_code = %s
+        ", $factor_code
+    ));
+    if (is_null($factor_item)){
+        wp_redirect('/');
+        exit();
+    }
+    wpf_load_view('front.factor.detail',compact('factor_item'));
+}

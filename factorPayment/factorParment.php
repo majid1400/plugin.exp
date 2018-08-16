@@ -21,3 +21,13 @@ define('WPF_ASSETS', WPF_URL . 'assets/');
 
 include WPF_INC . "functions.php";
 include WPF_ADMIN . "admin.php";
+
+function wpf_check_factor_link(){
+    $current_url = wpf_get_current_url();
+    if (preg_match('/factor\/([A-Za-z0-9]+)/',$current_url,$matches) != false){
+        $factor_code = $matches[1];
+        wpf_show_factor($factor_code);
+        exit();
+    }
+}
+add_action('parse_request','wpf_check_factor_link');
