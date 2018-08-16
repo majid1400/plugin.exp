@@ -8,3 +8,8 @@ function wpf_load_view($view, $params = array()) // admin.dashboard.index
         include $view_file_path;
     }
 }
+
+function wpf_generator_code($length = 10)
+{
+    return bin2hex(random_bytes($length / 2));
+}
