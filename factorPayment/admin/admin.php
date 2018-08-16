@@ -1,6 +1,9 @@
 <?php
 function wpf_main_page(){
-    wpf_load_view('admin.dashboard.index');
+    global $wpdb,$table_prefix;
+    $table_factors = $table_prefix.'factors';
+    $factors = $wpdb->get_results("SELECT * FROM {$table_factors}");
+    wpf_load_view('admin.dashboard.index',compact('factors'));
 }
 
 function wpf_add_menu_page(){
