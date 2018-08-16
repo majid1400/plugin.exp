@@ -25,9 +25,28 @@ function wpf_status($status_code)
     return "<span class='wpf_status {$class_css}'>{$txt_name}</span>";
 }
 
-function wpf_amount($amount){
-    $persian_numbers = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
-    $en_numbers = ['0','1','2','3','4','5','6','7','8','9'];
+function wpf_amount($amount)
+{
+
     $result = number_format($amount);
-    return str_replace($en_numbers,$persian_numbers,$result);
+    return wpf_numbers_persian($result);
+}
+
+function wpf_numbers_persian($numbers)
+{
+    $persian_numbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    $en_numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    return str_replace($en_numbers, $persian_numbers, $numbers);
+}
+
+function wpf_date_persian($en_date)
+{
+    if (!empty($en_date)) {
+        list($date, $time) = explode(' ', $en_date);
+        list($y, $m, $d) = explode('-', $date);
+        $persian_date = gregorian_to_jalali($y, $m, $d);
+        $result = implode('-', $persian_date) . ' ' . $time;
+        return wpf_numbers_persian($result);
+    }
+
 }
