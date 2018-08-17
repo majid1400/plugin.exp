@@ -19,15 +19,29 @@ define('WPF_ADMIN', WPF_DIR . 'admin/');
 define('WPF_INC', WPF_DIR . 'inc/');
 define('WPF_ASSETS', WPF_URL . 'assets/');
 
+include WPF_INC . "gateways.php";
 include WPF_INC . "functions.php";
+include WPF_INC . "nusoap.php";
 include WPF_ADMIN . "admin.php";
 
-function wpf_check_factor_link(){
+function wpf_check_factor_link()
+{
     $current_url = wpf_get_current_url();
-    if (preg_match('/factor\/([A-Za-z0-9]+)/',$current_url,$matches) != false){
+    if (preg_match('/factor\/([A-Za-z0-9]+)/', $current_url, $matches) != false) {
         $factor_code = $matches[1];
         wpf_show_factor($factor_code);
         exit();
     }
 }
-add_action('parse_request','wpf_check_factor_link');
+
+function wpf_verify_payment()
+{
+    $current_url = wpf_get_current_url();
+    if (preg_match('/payment\/saman\/verify/', $current_url, $matches) != false) {
+        wpf_verify_factor();
+        exit();
+    }
+}
+
+add_action('parse_request', 'wpf_check_factor_link');
+add_action('parse_request', 'wpf_verify_payment');

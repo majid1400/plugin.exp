@@ -15,23 +15,25 @@
 <div class="container">
     <div class="row">
         <div class="column column-offset-50">
-            <div class="wrapper">
-                <div class="row_item">
-                    <span>مبلغ:</span>
-                    <span><?php echo $factor_item->factor_amount ?></span>
+            <form action="" method="post">
+                <div class="wrapper">
+                    <div class="row_item">
+                        <span>مبلغ:</span>
+                        <span><?php echo $factor_item->factor_amount ?></span>
+                    </div>
+
+                    <div class="row_item">
+                        <span>توضیحات سفارش:</span>
+                        <span><?php echo $factor_item->factor_description ?></span>
+                    </div>
+
+                    <div class="row_item">
+                        <button type="submit" name="doPayment">پرداخت</button>
+                    </div>
+
+
                 </div>
-
-                <div class="row_item">
-                    <span>توضیحات سفارش:</span>
-                    <span><?php echo $factor_item->factor_description ?></span>
-                </div>
-
-                <div class="row_item">
-                    <button type="submit" name="doPayment">پرداخت</button>
-                </div>
-
-
-            </div>
+            </form>
         </div>
     </div>
 </div>

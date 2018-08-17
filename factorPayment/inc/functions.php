@@ -56,8 +56,9 @@ function wpf_get_current_url()
     return $_SERVER['REQUEST_URI'];
 }
 
-function wpf_show_factor($factor_code){
-    global $wpdb,$table_prefix;
+function wpf_show_factor($factor_code)
+{
+    global $wpdb, $table_prefix;
     $factor_item = $wpdb->get_row($wpdb->prepare(
         "
         SELECT *
@@ -65,9 +66,62 @@ function wpf_show_factor($factor_code){
         WHERE factor_code = %s
         ", $factor_code
     ));
-    if (is_null($factor_item)){
+    if (is_null($factor_item)) {
         wp_redirect('/');
         exit();
     }
-    wpf_load_view('front.factor.detail',compact('factor_item'));
+    if (isset($_POST['doPayment'])) {
+        $payment_insert_result = $wpdb->insert($table_prefix . 'factor_payments', [
+            'payment_factor_id' => $factor_item->factor_id,
+            'payment_amount' => $factor_item->factor_amount,
+            'payment_gateway' => 'سامان',
+            'payment_res_num' => wpf_generate_res_num(),
+            'payment_create_at' => date('Y-m-d H:i:s'),
+            'payment_status' => 0,
+        ]);
+        if ($payment_insert_result) {
+            $payment_id = $wpdb->insert_id;
+            wpf_saman_payment_request($payment_id);
+        }
+    }
+    wpf_load_view('front.factor.detail', compact('factor_item'));
+}
+
+function wpf_generate_res_num()
+{
+    return (int)microtime(true);
+}
+
+function wpf_verify_factor()
+{
+    global $wpdb, $table_prefix;
+
+    $state = $_POST['State'];
+    $ref_num = $_POST['RefNum'];
+    $res_num = $_POST['ResNum'];
+    $trace_number = $_POST['TRACENO'];
+
+    $payment_item = $wpdb->get_row($wpdb->prepare("
+    SELECT *
+    FROM {$table_prefix}factor_payments
+    WHERE payment_res_num = %s
+    ", $res_num));
+
+    $verify_result = wpf_saman_payment_verify($state, $ref_num, $res_num, $payment_item->payment_amount);
+    if ($verify_result) {
+        $wpdb->update($table_prefix . 'factor_payments', [
+            'payment_ref_num' => $trace_number,
+            'payment_paid_at' => date('Y-m-d H:i:s'),
+            'payment_status' => 1
+        ], [
+            'payment_id' => $payment_item->payment_id
+        ], ['%s', '%s', '%d'], ['%d']);
+        $wpdb->update($table_prefix.'factors',[
+            'factor_status' => 1
+        ],[
+            'factor_id' => $payment_item->payment_factor_id
+        ],['%d'],['%d']);
+    }
+    wpf_load_view('front.payment.result', compact('payment_item','trace_number'));
+
 }
